@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Time: Year 1120 Reading Adventure</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+TC:wght@500;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --parchment: #fdf6e3;
+      --parchment-dark: #f4e4bc;
+      --ink-brown: #3e2723;
+      --vermilion: #d84315;
+      --jade: #2e7d32;
+      --imperial-gold: #f59e0b;
+      --scroll-wood: #6d4c41;
+    }
+
+    body {
+      font-family: 'Nunito', 'Noto Sans TC', sans-serif;
+      background-color: #f3e5c2;
+      color: var(--ink-brown);
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    h1, h2, h3, .font-cartoon {
+      font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
+    }
+
+    /* Ancient Song Dynasty Landscape + Time Vortex Background */
+    .bg-song-landscape {
+      background:
+        radial-gradient(circle at 15% 18%, rgba(255, 224, 130, 0.55) 0%, transparent 42%),
+        radial-gradient(circle at 85% 15%, rgba(165, 214, 167, 0.45) 0%, transparent 45%),
+        linear-gradient(180deg, #e8d8b0 0%, #f5ebd1 50%, #e4cfa0 100%);
+      position: relative;
+    }
+
+    /* Traditional Chinese Cloud Pattern Overlay */
+    .cloud-pattern {
+      background-image: radial-gradient(rgba(141, 110, 99, 0.12) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+    }
+
+    /* Ancient Scroll Card Styling */
+    .scroll-container {
+      background: linear-gradient(180deg, #fffdf7 0%, #fcf2d9 100%);
+      border: 4px solid #8d6e63;
+      box-shadow:
+        0 14px 30px rgba(62, 39, 35, 0.22),
+        inset 0 0 28px rgba(215, 185, 130, 0.45);
+      position: relative;
+    }
+
+    /* Wooden Scroll Rollers Top & Bottom */
+    .scroll-roller {
+      height: 18px;
+      background: linear-gradient(90deg, #4e342e 0%, #8d6e63 18%, #a1887f 50%, #8d6e63 82%, #4e342e 100%);
+      border-radius: 999px;
+      border: 2px solid #3e2723;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+
+    .scroll-roller::before,
+    .scroll-roller::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      width: 16px;
+      height: 20px;
+      background: linear-gradient(180deg, #ffd54f, #d97706);
+      border: 2px solid #3e2723;
+      border-radius: 4px;
+    }
+    .scroll-roller::before { left: -8px; }
+    .scroll-roller::after { right: -8px; }
+
+    /* Tactile Cartoon Buttons */
+    .btn-cartoon {
+      transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 5px 0 rgba(62, 39, 35, 0.35);
+    }
+    .btn-cartoon:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 0 rgba(62, 39, 35, 0.35);
+    }
+    .btn-cartoon:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(62, 39, 35, 0.35);
+    }
+
+    /* Option Button States */
+    .option-card {
+      background: #ffffff;
+      border: 3px solid #bcaaa4;
+      box-shadow: 0 5px 0 #8d6e63;
+      transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .option-card:hover:not(:disabled) {
+      border-color: #f59e0b;
+      background-color: #fffbeb;
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 8px 0 #d97706;
+    }
+    .option-card:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #8d6e63;
+    }
+    .option-correct {
+      background: #dcfce7 !important;
+      border-color: #16a34a !important;
+      box-shadow: 0 5px 0 #15803d !important;
+      color: #14532d !important;
+      animation: popBounce 0.45s ease;
+    }
+    .option-wrong {
+      background: #fee2e2 !important;
+      border-color: #dc2626 !important;
+      box-shadow: 0 5px 0 #991b1b !important;
+      color: #7f1d1d !important;
+      animation: shakeSide 0.4s ease;
+    }
+    .option-dimmed {
+      opacity: 0.6;
+    }
+
+    /* Animations */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1.5deg); }
+    }
+    @keyframes swayKite {
+      0%, 100% { transform: rotate(-4deg) translateY(0px); }
+      50% { transform: rotate(5deg) translateY(-6px); }
+    }
+    @keyframes popBounce {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.05); }
+      75% { transform: scale(0.98); }
+      100% { transform: scale(1); }
+    }
+    @keyframes shakeSide {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-4px); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.5)); }
+      50% { filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.95)); }
+    }
+
+    .animate-float { animation: floatSlow 3.5s ease-in-out infinite; }
+    .animate-kite { animation: swayKite 2.8s ease-in-out infinite; transform-origin: bottom center; }
+    .animate-glow { animation: pulseGlow 2s infinite; }
+
+    /* Custom Scrollbar for Review List */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f4e4bc; border-radius: 8px; }
+    ::-webkit-scrollbar-thumb { background: #a1887f; border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: #6d4c41; }
+  </style>
+</head>
+<body class="bg-song-landscape cloud-pattern min-h-screen flex flex-col justify-between">
+
+  <!-- Decorative Song Dynasty Silhouette Header SVG -->
+  <div class="fixed inset-x-0 bottom-0 pointer-events-none opacity-20 z-0">
+    <svg viewBox="0 0 1440 220" class="w-full h-auto" preserveAspectRatio="none">
+      <!-- Distant Ink Mountains -->
+      <path d="M0,180 Q180,70 360,150 T720,120 T1080,145 T1440,90 L1440,220 L0,220 Z" fill="#8d6e63"/>
+      <path d="M0,200 Q260,110 520,175 T1020,135 T1440,165 L1440,220 L0,220 Z" fill="#5d4037"/>
+      <!-- Song Dynasty Rainbow Bridge (Hongqiao) Silhouette -->
+      <path d="M580,210 Q720,115 860,210" fill="none" stroke="#3e2723" stroke-width="14" stroke-linecap="round"/>
+      <path d="M600,195 L600,175 M640,172 L640,152 M680,158 L680,138 M720,153 L720,133 M760,158 L760,138 M800,172 L800,152 M840,195 L840,175" stroke="#3e2723" stroke-width="4"/>
+    </svg>
+  </div>
+
+  <!-- Top Navigation & Sound Toggle -->
+  <header class="relative z-10 w-full max-w-5xl mx-auto px-4 pt-4 pb-2 flex items-center justify-between">
+    <div class="flex items-center gap-2.5 bg-amber-900/90 text-amber-50 px-4 py-2 rounded-2xl border-2 border-amber-400 shadow-md">
+      <span class="text-xl">⏳</span>
+      <div>
+        <span class="font-cartoon text-sm sm:text-base font-bold tracking-wide text-amber-300">UNIT 3 READING</span>
+        <span class="hidden sm:inline text-xs text-amber-100 ml-2">| 時光機大冒險 (Year 1120)</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button id="homeBtn" onclick="confirmReturnHome()" class="hidden btn-cartoon bg-amber-100 hover:bg-amber-200 text-amber-950 font-cartoon font-bold px-3.5 py-2 rounded-xl border-2 border-amber-700 text-sm flex items-center gap-1.5">
+        <span>🏠</span>
+        <span class="hidden sm:inline">Menu</span>
+      </button>
+      <button id="soundToggleBtn" onclick="toggleSound()" class="btn-cartoon bg-amber-100 hover:bg-amber-200 text-amber-950 font-cartoon font-bold px-3.5 py-2 rounded-xl border-2 border-amber-700 text-sm flex items-center gap-1.5" title="Toggle Sound Effects">
+        <span id="soundIcon">🔊</span>
+        <span id="soundLabel" class="hidden sm:inline">Sound ON</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="relative z-10 flex-grow flex items-center justify-center px-3 sm:px-6 py-4">
+    <div class="w-full max-w-4xl">
+
+      <!-- ==================== 1. START SCREEN ==================== -->
+      <section id="startScreen" class="transition-all duration-300">
+        <div class="scroll-roller mx-auto w-[98%]"></div>
+        <div class="scroll-container rounded-2xl p-6 sm:p-10 text-center">
+
+          <!-- Ancient Red Stamp Badge -->
+          <div class="inline-flex items-center gap-2 bg-red-700 text-amber-50 px-4 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider uppercase mb-4 border-2 border-amber-300 shadow">
+            <span>🏮 Song Dynasty Time Travel • 宋代時空之旅 🏮</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-5xl font-extrabold text-amber-950 tracking-tight mb-2 drop-shadow-sm">
+            Doctor Time's <span class="text-red-700">1120</span> Adventure!
+          </h1>
+          <p class="text-base sm:text-lg font-bold text-amber-800 mb-6">
+            第三課《時光機大冒險》小四閱讀理解挑戰賽
+          </p>
+
+          <!-- Cute Cartoon Scene Illustration (Time Machine + Dr. Time + Ming Ming's Kite + Smelly Fish) -->
+          <div class="max-w-xl mx-auto mb-6 bg-amber-100/70 rounded-3xl p-4 border-2 border-dashed border-amber-600/50">
+            <svg viewBox="0 0 520 190" class="w-full h-auto overflow-visible">
+              <!-- Ancient Scroll Backdrop inside SVG -->
+              <rect x="35" y="15" width="450" height="145" rx="18" fill="#fef3c7" stroke="#b45309" stroke-width="3"/>
+              <!-- Song Pavilion Silhouette -->
+              <path d="M75,115 L145,115 L135,90 L85,90 Z" fill="#d97706" opacity="0.35"/>
+              <path d="M65,92 Q110,72 155,92 L145,98 Q110,83 75,98 Z" fill="#92400e" opacity="0.45"/>
+              <path d="M78,74 Q110,56 142,74 L134,79 Q110,66 86,79 Z" fill="#92400e" opacity="0.45"/>
+
+              <!-- Ming Ming's Colorful Kite (Floating) -->
+              <g class="animate-kite">
+                <path d="M415,28 L442,58 L415,92 L388,58 Z" fill="#ef4444" stroke="#7f1d1d" stroke-width="2.5"/>
+                <path d="M415,28 L442,58 L415,58 Z" fill="#facc15"/>
+                <path d="M415,58 L388,58 L415,92 Z" fill="#38bdf8"/>
+                <line x1="415" y1="28" x2="415" y2="92" stroke="#7f1d1d" stroke-width="2"/>
+                <line x1="388" y1="58" x2="442" y2="58" stroke="#7f1d1d" stroke-width="2"/>
+                <!-- Kite Tail -->
+                <path d="M415,92 Q425,112 408,126 T418,150" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="412" cy="112" r="3.5" fill="#facc15"/>
+                <circle cx="412" cy="135" r="3.5" fill="#22c55e"/>
+              </g>
+
+              <!-- Quirky Time Machine -->
+              <g class="animate-float">
+                <!-- Base -->
+                <rect x="85" y="135" width="115" height="22" rx="8" fill="#64748b" stroke="#1e293b" stroke-width="2.5"/>
+                <!-- Main Yellow Body -->
+                <rect x="100" y="88" width="85" height="50" rx="16" fill="#facc15" stroke="#854d0e" stroke-width="3"/>
+                <!-- Control Panel -->
+                <rect x="112" y="108" width="60" height="26" rx="6" fill="#dc2626" stroke="#7f1d1d" stroke-width="2"/>
+                <circle cx="126" cy="121" r="5" fill="#4ade80"/>
+                <circle cx="142" cy="121" r="5" fill="#38bdf8"/>
+                <circle cx="158" cy="121" r="5" fill="#fde047"/>
+                <!-- Levers -->
+                <line x1="122" y1="108" x2="115" y2="92" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="115" cy="90" r="5" fill="#22c55e" stroke="#1e293b" stroke-width="1.5"/>
+                <line x1="162" y1="108" x2="170" y2="92" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="170" cy="90" r="5" fill="#ef4444" stroke="#1e293b" stroke-width="1.5"/>
+                <!-- Time Dial -->
+                <circle cx="142" cy="74" r="22" fill="#e0f2fe" stroke="#0284c7" stroke-width="3.5"/>
+                <text x="142" y="78" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">1120</text>
+              </g>
+
+              <!-- Doctor Time (Center Character) -->
+              <g transform="translate(230, 42)">
+                <!-- Lab Coat -->
+                <path d="M12,68 L58,68 L65,120 L5,120 Z" fill="#e0f2fe" stroke="#0369a1" stroke-width="2.5"/>
+                <line x1="35" y1="68" x2="35" y2="120" stroke="#0369a1" stroke-width="2"/>
+                <!-- Tie -->
+                <polygon points="35,68 31,85 35,92 39,85" fill="#ea580c"/>
+                <!-- Head -->
+                <circle cx="35" cy="44" r="24" fill="#fed7aa" stroke="#7c2d12" stroke-width="2.5"/>
+                <!-- Spiky Brown Hair -->
+                <path d="M10,38 Q5,18 22,22 Q28,6 42,18 Q58,10 56,28 Q68,32 58,44 Q48,26 35,28 Q20,26 10,38 Z" fill="#5d4037" stroke="#3e2723" stroke-width="2"/>
+                <!-- Eyes & Happy Smile -->
+                <circle cx="27" cy="43" r="3" fill="#1e293b"/>
+                <circle cx="43" cy="43" r="3" fill="#1e293b"/>
+                <path d="M27,53 Q35,61 43,53" fill="none" stroke="#7c2d12" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Holding Smelly Fish! -->
+                <g transform="translate(65, 65) rotate(12)">
+                  <ellipse cx="18" cy="14" rx="16" ry="8" fill="#94a3b8" stroke="#334155" stroke-width="2"/>
+                  <polygon points="32,14 43,6 43,22" fill="#94a3b8" stroke="#334155" stroke-width="2"/>
+                  <circle cx="10" cy="12" r="2" fill="#0f172a"/>
+                  <!-- Stink wavy lines -->
+                  <path d="M12,2 Q15,-4 12,-9" fill="none" stroke="#65a30d" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M22,2 Q25,-4 22,-9" fill="none" stroke="#65a30d" stroke-width="2" stroke-linecap="round"/>
+                </g>
+              </g>
+
+              <!-- Ming Ming (Cute Boy with Traditional Hair Bun) -->
+              <g transform="translate(335, 68)">
+                <!-- Traditional Tunic -->
+                <path d="M10,50 L46,50 L50,92 L6,92 Z" fill="#a855f7" stroke="#581c87" stroke-width="2.5"/>
+                <path d="M18,50 L28,64 L38,50" fill="none" stroke="#facc15" stroke-width="2.5"/>
+                <!-- Head -->
+                <circle cx="28" cy="30" r="19" fill="#fed7aa" stroke="#7c2d12" stroke-width="2.5"/>
+                <!-- Cute Topknot -->
+                <circle cx="28" cy="9" r="7" fill="#1e293b"/>
+                <path d="M10,26 Q28,12 46,26" fill="#1e293b"/>
+                <!-- Eyes & Smile -->
+                <circle cx="22" cy="30" r="2.5" fill="#1e293b"/>
+                <circle cx="34" cy="30" r="2.5" fill="#1e293b"/>
+                <path d="M22,38 Q28,44 34,38" fill="none" stroke="#7c2d12" stroke-width="2" stroke-linecap="round"/>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Game Mode Selection -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto mb-4">
+            <button onclick="startGame(20)" class="btn-cartoon bg-gradient-to-b from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-2xl p-4 border-2 border-amber-300 flex flex-col items-center justify-center">
+              <span class="text-2xl mb-1">🚀</span>
+              <span class="font-cartoon text-xl font-bold">Full Adventure (20 Questions)</span>
+              <span class="text-xs text-amber-200 mt-0.5">完整挑戰全部 20 題閱讀理解</span>
+            </button>
+
+            <button onclick="startGame(10)" class="btn-cartoon bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 rounded-2xl p-4 border-2 border-amber-800 flex flex-col items-center justify-center">
+              <span class="text-2xl mb-1">⚡</span>
+              <span class="font-cartoon text-xl font-bold">Quick Sprint (10 Questions)</span>
+              <span class="text-xs text-amber-900 font-bold mt-0.5">隨機精選 10 題快速熱身</span>
+            </button>
+          </div>
+
+          <p class="text-xs sm:text-sm text-amber-800/80 font-semibold">
+            💡 Tip: Need help? Click the <span class="underline decoration-amber-600">Story Clue</span> button during any question!
+          </p>
+        </div>
+        <div class="scroll-roller mx-auto w-[98%]"></div>
+      </section>
+
+      <!-- ==================== 2. QUIZ GAME SCREEN ==================== -->
+      <section id="quizScreen" class="hidden transition-all duration-300">
+
+        <!-- Top Status HUD (Timeline Progress, Score, Streak) -->
+        <div class="bg-amber-950/90 text-amber-50 rounded-2xl p-3 sm:p-4 mb-4 border-2 border-amber-500/80 shadow-lg">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+            <!-- Question Counter -->
+            <div class="flex items-center gap-2">
+              <span class="bg-red-600 text-white font-cartoon font-bold px-3 py-1 rounded-xl text-sm sm:text-base border border-amber-300">
+                Question <span id="currentQNum">1</span> / <span id="totalQNum">20</span>
+              </span>
+              <span id="categoryBadge" class="hidden md:inline-block bg-amber-800/80 text-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg border border-amber-600">
+                📖 Story Detail
+              </span>
+            </div>
+
+            <!-- Streak & Score -->
+            <div class="flex items-center gap-2 sm:gap-3">
+              <div id="streakBadge" class="bg-orange-600/90 text-white font-cartoon font-bold px-3 py-1 rounded-xl text-xs sm:text-sm border border-amber-300 flex items-center gap-1 transition-transform">
+                <span>🔥</span>
+                <span>Streak: <span id="streakCount">0</span></span>
+              </div>
+              <div class="bg-amber-400 text-amber-950 font-cartoon font-extrabold px-3.5 py-1 rounded-xl text-sm sm:text-base border-2 border-amber-200 flex items-center gap-1.5 shadow-inner">
+                <span>🪙</span>
+                <span id="scoreCount">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Time Travel Progress Bar (2026 -> 1120 AD) -->
+          <div class="relative pt-1">
+            <div class="flex justify-between text-[11px] font-bold text-amber-300 mb-1">
+              <span>🏛️ Museum (Start)</span>
+              <span id="yearIndicator" class="text-amber-100">Time Jumping...</span>
+              <span>🏮 Year 1120 (Goal)</span>
+            </div>
+            <div class="w-full h-3.5 bg-amber-900 rounded-full overflow-hidden border border-amber-600 p-0.5">
+              <div id="progressBar" class="h-full bg-gradient-to-r from-amber-400 via-yellow-300 to-emerald-400 rounded-full transition-all duration-500" style="width: 5%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ancient Scroll Question Card -->
+        <div class="scroll-roller mx-auto w-[98%]"></div>
+        <div class="scroll-container rounded-2xl p-5 sm:p-8">
+
+          <!-- Question Header & Hint Toggle -->
+          <div class="flex items-start justify-between gap-3 mb-4">
+            <div class="flex items-center gap-3">
+              <div id="questionEmoji" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-200/80 border-2 border-amber-600 flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-sm">
+                🕰️
+              </div>
+              <h2 id="questionText" class="text-xl sm:text-2xl md:text-3xl font-extrabold text-amber-950 leading-snug">
+                Loading question...
+              </h2>
+            </div>
+
+            <button id="hintBtn" onclick="toggleHint()" class="btn-cartoon shrink-0 bg-amber-200 hover:bg-amber-300 text-amber-950 font-cartoon font-bold px-3 py-2 rounded-xl border-2 border-amber-700 text-xs sm:text-sm flex items-center gap-1">
+              <span>📜</span>
+              <span>Clue</span>
+            </button>
+          </div>
+
+          <!-- Collapsible Ancient Scroll Story Clue -->
+          <div id="hintBox" class="hidden mb-5 bg-amber-100/90 border-l-4 border-red-600 rounded-r-xl p-3.5 text-sm sm:text-base text-amber-900 shadow-inner">
+            <div class="flex items-center gap-2 font-bold text-red-800 mb-0.5">
+              <span>🔍 Story Clue (課文線索):</span>
+            </div>
+            <p id="hintText" class="italic"></p>
+          </div>
+
+          <!-- 4 Cartoon Multiple Choice Options -->
+          <div id="optionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4 mb-5">
+            <!-- Options injected dynamically by JS -->
+          </div>
+
+          <!-- Immediate Feedback & Explanation Banner -->
+          <div id="feedbackBox" class="hidden rounded-2xl p-4 border-2 transition-all duration-300">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-start gap-3">
+                <div id="feedbackEmoji" class="text-3xl sm:text-4xl shrink-0">🎉</div>
+                <div>
+                  <h3 id="feedbackTitle" class="font-cartoon text-lg sm:text-xl font-bold">Great Job!</h3>
+                  <p id="feedbackExplanation" class="text-sm sm:text-base font-semibold mt-0.5"></p>
+                </div>
+              </div>
+
+              <button id="nextBtn" onclick="nextQuestion()" class="btn-cartoon shrink-0 bg-gradient-to-b from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-cartoon font-bold text-base sm:text-lg px-6 py-3 rounded-xl border-2 border-emerald-200 flex items-center justify-center gap-2">
+                <span id="nextBtnLabel">Next Question</span>
+                <span>➡️</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <div class="scroll-roller mx-auto w-[98%]"></div>
+      </section>
+
+      <!-- ==================== 3. END / CERTIFICATE SCREEN ==================== -->
+      <section id="endScreen" class="hidden transition-all duration-300">
+        <div class="scroll-roller mx-auto w-[98%]"></div>
+        <div class="scroll-container rounded-2xl p-6 sm:p-9 text-center">
+
+          <div class="inline-block bg-amber-500 text-amber-950 font-cartoon font-extrabold px-4 py-1 rounded-full text-xs sm:text-sm uppercase tracking-wider border-2 border-amber-800 mb-3">
+            🏆 Time Travel Mission Complete!
+          </div>
+
+          <h2 id="rankTitle" class="text-3xl sm:text-4xl font-extrabold text-red-700 mb-1">
+            Master Time Explorer!
+          </h2>
+          <p id="rankSubtitle" class="text-sm sm:text-base font-bold text-amber-800 mb-4">
+            太厲害了！你成功完成了1120年時空閱讀任務！
+          </p>
+
+          <!-- Stars Display -->
+          <div id="starsContainer" class="flex justify-center gap-2 text-4xl sm:text-5xl mb-5 animate-glow">
+            ⭐⭐⭐
+          </div>
+
+          <!-- Score Summary Cards -->
+          <div class="grid grid-cols-3 gap-3 max-w-lg mx-auto mb-6">
+            <div class="bg-amber-100/90 border-2 border-amber-600 rounded-2xl p-3">
+              <div class="text-xs font-bold text-amber-800 uppercase">Score</div>
+              <div id="finalScore" class="font-cartoon text-2xl sm:text-3xl font-extrabold text-amber-950">0</div>
+            </div>
+            <div class="bg-emerald-100/90 border-2 border-emerald-600 rounded-2xl p-3">
+              <div class="text-xs font-bold text-emerald-800 uppercase">Correct</div>
+              <div id="finalCorrect" class="font-cartoon text-2xl sm:text-3xl font-extrabold text-emerald-900">0/20</div>
+            </div>
+            <div class="bg-orange-100/90 border-2 border-orange-600 rounded-2xl p-3">
+              <div class="text-xs font-bold text-orange-800 uppercase">Best Streak</div>
+              <div id="finalStreak" class="font-cartoon text-2xl sm:text-3xl font-extrabold text-orange-900">0</div>
+            </div>
+          </div>
+
+          <!-- Review Section (Shows missed questions or celebratory all-correct banner) -->
+          <div id="reviewSection" class="text-left max-w-2xl mx-auto mb-6">
+            <h3 id="reviewHeader" class="font-cartoon text-lg font-bold text-amber-950 mb-2 flex items-center gap-2">
+              <span>📋</span>
+              <span>Question Review (錯題溫習室):</span>
+            </h3>
+            <div id="reviewList" class="max-h-60 overflow-y-auto space-y-2.5 pr-1">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap justify-center gap-3">
+            <button onclick="restartSameMode()" class="btn-cartoon bg-gradient-to-b from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-cartoon font-bold text-lg px-7 py-3.5 rounded-2xl border-2 border-amber-300 flex items-center gap-2">
+              <span>🔄</span>
+              <span>Play Again (再玩一次)</span>
+            </button>
+            <button onclick="returnToMenu()" class="btn-cartoon bg-amber-200 hover:bg-amber-300 text-amber-950 font-cartoon font-bold text-lg px-6 py-3.5 rounded-2xl border-2 border-amber-800 flex items-center gap-2">
+              <span>🏠</span>
+              <span>Change Mode</span>
+            </button>
+          </div>
+        </div>
+        <div class="scroll-roller mx-auto w-[98%]"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Custom Modal for Confirming Return to Menu (Replaces native confirm()) -->
+  <div id="confirmModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-amber-50 border-4 border-amber-800 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
+      <div class="text-4xl mb-2">🕰️</div>
+      <h3 class="font-cartoon text-xl font-bold text-amber-950 mb-2">Return to Main Menu?</h3>
+      <p class="text-sm text-amber-800 font-semibold mb-5">Your current time travel progress will be reset. Are you sure?</p>
+      <div class="flex justify-center gap-3">
+        <button onclick="closeConfirmModal()" class="btn-cartoon bg-gray-200 hover:bg-gray-300 text-gray-800 font-cartoon font-bold px-5 py-2.5 rounded-xl border-2 border-gray-500">
+          Keep Playing
+        </button>
+        <button onclick="returnToMenu()" class="btn-cartoon bg-red-600 hover:bg-red-500 text-white font-cartoon font-bold px-5 py-2.5 rounded-xl border-2 border-red-900">
+          Yes, Exit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="relative z-10 text-center py-3 text-xs font-bold text-amber-900/75">
+    Primary 4 English • Unit 3 Reading Comprehension: "Doctor Time" (Year 1120)
+  </footer>
+
+  <script>
+    // ==================== COMPLETE 20-QUESTION DATABASE ====================
+    const ALL_QUESTIONS = [
+      {
+        id: 1,
+        emoji: "🕰️",
+        category: "Time & Setting",
+        question: "Which year did Doctor Time travel to in the story?",
+        correct: "1120",
+        options: ["1120", "1210", "1920", "2020"],
+        hint: "Look at line 4: Doctor Time says, 'I went to the year...'",
+        explanation: "Doctor Time told the reporter: 'I went to the year 1120.'"
+      },
+      {
+        id: 2,
+        emoji: "🌾",
+        category: "Life in 1120",
+        question: "Where did most people work in the year 1120 according to Doctor Time?",
+        correct: "On farms",
+        options: ["On farms", "In supermarkets", "At the History Museum", "In big factories"],
+        hint: "Look at line 5: Doctor Time pointed at a picture of fields and said, 'Most people worked...'",
+        explanation: "In 1120, most people worked on farms and worked very hard."
+      },
+      {
+        id: 3,
+        emoji: "🛖",
+        category: "Homes in 1120",
+        question: "What kind of homes did most people live in during the year 1120?",
+        correct: "Small huts",
+        options: ["Small huts", "Big houses", "Tall flats", "Stone castles"],
+        hint: "Look at line 9: 'Most people lived in...'",
+        explanation: "Most people lived in small huts, while only some rich people lived in big houses."
+      },
+      {
+        id: 4,
+        emoji: "🧵",
+        category: "Clothes in 1120",
+        question: "How did most people get their clothes in the year 1120?",
+        correct: "They sewed their own clothes",
+        options: [
+          "They sewed their own clothes",
+          "They bought them at shopping centres",
+          "They bought them at street markets",
+          "Doctor Time gave them clothes"
+        ],
+        hint: "Look at lines 14–15: 'Most people sewed their own... They didn't buy them.'",
+        explanation: "People didn't buy clothes in shops—most people sewed their own clothes!"
+      },
+      {
+        id: 5,
+        emoji: "🏮",
+        category: "Food & Markets",
+        question: "Where did some people buy food in the year 1120?",
+        correct: "At street markets",
+        options: ["At street markets", "At supermarkets", "At shopping centres", "At the History Museum"],
+        hint: "Look at lines 16–17: 'Some people bought food from...'",
+        explanation: "There were no supermarkets, so some people bought food from street markets."
+      },
+      {
+        id: 6,
+        emoji: "🐟",
+        category: "Story Action",
+        question: "Why did the reporter hold her nose and say 'Pooh!'?",
+        correct: "Doctor Time took a fish out of his pocket",
+        options: [
+          "Doctor Time took a fish out of his pocket",
+          "The History Museum was very dirty",
+          "Ming Ming dropped his kite",
+          "She didn't like the picture on the wall"
+        ],
+        hint: "Look at lines 17–19: Doctor Time pulled something smelly out of his pocket!",
+        explanation: "Doctor Time took a smelly fish out of his pocket, so the reporter held her nose and said 'Pooh!'"
+      },
+      {
+        id: 7,
+        emoji: "🪁",
+        category: "Children's Life",
+        question: "What did some children play with in the year 1120?",
+        correct: "Homemade toys",
+        options: ["Homemade toys", "Video games", "Toy cars from shops", "Plastic robots"],
+        hint: "Look at line 21: 'Some children played with... toys.'",
+        explanation: "In 1120, some children played with homemade toys (toys made at home)."
+      },
+      {
+        id: 8,
+        emoji: "👦",
+        category: "Characters",
+        question: "Who climbed out of the time machine holding a kite?",
+        correct: "Ming Ming",
+        options: ["Ming Ming", "Doctor Time", "A reporter", "A farmer"],
+        hint: "Look at lines 25–26: Doctor Time was surprised and asked, '..., what are you doing here?'",
+        explanation: "A small boy named Ming Ming climbed out of the time machine holding his kite!"
+      },
+      {
+        id: 9,
+        emoji: "😲",
+        category: "Story Ending",
+        question: "Why was Doctor Time surprised at the end of the story?",
+        correct: "Ming Ming came out of the time machine with the lost kite",
+        options: [
+          "Ming Ming came out of the time machine with the lost kite",
+          "The fish in his pocket disappeared",
+          "The reporters left the museum",
+          "His time machine broke down"
+        ],
+        hint: "Look at lines 24–26: Doctor Time didn't expect Ming Ming to travel back with him!",
+        explanation: "Ming Ming had climbed inside the time machine to find his lost kite and travelled to the museum!"
+      },
+      {
+        id: 10,
+        emoji: "👉",
+        category: "Vocabulary",
+        question: "In the sentence 'He pointed at a picture on the wall', what does 'pointed at' mean?",
+        correct: "Showed the direction with a finger",
+        options: [
+          "Showed the direction with a finger",
+          "Painted on the wall",
+          "Took down from the wall",
+          "Looked away from"
+        ],
+        hint: "When you want someone to look at a picture on the wall, you use your finger to show where it is.",
+        explanation: "'Pointed at' means using a finger to show where something is."
+      },
+      {
+        id: 11,
+        emoji: "🏛️",
+        category: "Setting",
+        question: "Where does the story take place at the beginning?",
+        correct: "At the History Museum",
+        options: ["At the History Museum", "On a farm in 1120", "At a street market", "Inside a small hut"],
+        hint: "Read the very first sentence of the story (line 1)!",
+        explanation: "Line 1 says: 'At the History Museum, everyone was very excited.'"
+      },
+      {
+        id: 12,
+        emoji: "🤩",
+        category: "Feelings",
+        question: "How did everyone feel at the History Museum at the start of the story?",
+        correct: "Very excited",
+        options: ["Very excited", "Very bored", "Very angry", "Very scared"],
+        hint: "Look at line 1: 'At the History Museum, everyone was...'",
+        explanation: "Everyone was very excited to welcome Doctor Time back from his trip!"
+      },
+      {
+        id: 13,
+        emoji: "🎤",
+        category: "Dialogue",
+        question: "What did the first reporter shout to Doctor Time?",
+        correct: "How was your trip and where did you go?",
+        options: [
+          "How was your trip and where did you go?",
+          "What is inside your pocket?",
+          "Who is that boy in the machine?",
+          "Where can I buy a kite?"
+        ],
+        hint: "Look at line 2: 'Doctor Time!' shouted a reporter. '...' ",
+        explanation: "The reporter shouted, 'How was your trip? Where did you go?'"
+      },
+      {
+        id: 14,
+        emoji: "🏯",
+        category: "Life in 1120",
+        question: "Who lived in big houses in the year 1120?",
+        correct: "Some rich people",
+        options: ["Some rich people", "Most farmers", "All the reporters", "Doctor Time and Ming Ming"],
+        hint: "Look at line 10: 'Some ... people lived in big houses.'",
+        explanation: "Doctor Time said, 'Some rich people lived in big houses.'"
+      },
+      {
+        id: 15,
+        emoji: "🏬",
+        category: "Observation",
+        question: "What could the second reporter NOT find in the picture?",
+        correct: "Any shopping centres or supermarkets",
+        options: [
+          "Any shopping centres or supermarkets",
+          "Any farms or huts",
+          "Any bridges or rivers",
+          "Any people or houses"
+        ],
+        hint: "Look at lines 11–12: 'Another reporter looked at the picture. She couldn't find...'",
+        explanation: "She couldn't find any shopping centres or supermarkets in the ancient picture."
+      },
+      {
+        id: 16,
+        emoji: "💰",
+        category: "Story Detail",
+        question: "Where did Doctor Time say he got the fish he held up?",
+        correct: "He bought it",
+        options: [
+          "He bought it",
+          "He caught it in a river",
+          "A farmer gave it to him",
+          "He found it in the museum"
+        ],
+        hint: "Look at line 18: Doctor Time held up the fish and said, 'I ... this fish.'",
+        explanation: "Doctor Time bought the fish at a street market in 1120!"
+      },
+      {
+        id: 17,
+        emoji: "🪆",
+        category: "Vocabulary",
+        question: "What does 'homemade' mean in 'homemade toys'?",
+        correct: "Made at home rather than bought in a shop",
+        options: [
+          "Made at home rather than bought in a shop",
+          "Very expensive and modern",
+          "Made of metal and batteries",
+          "Broken and old"
+        ],
+        hint: "Break the word into two parts: 'home' + 'made'.",
+        explanation: "'Homemade' means made at home by hand instead of bought in a shop."
+      },
+      {
+        id: 18,
+        emoji: "🌬️",
+        category: "Plot Sequence",
+        question: "What happened to the kite Doctor Time talked about before Ming Ming appeared?",
+        correct: "The boy had a kite and then lost it",
+        options: [
+          "The boy had a kite and then lost it",
+          "The kite flew into the river",
+          "Doctor Time bought the kite",
+          "The kite was torn in half"
+        ],
+        hint: "Look at lines 22–23: 'I talked to a boy with a kite, well, he had a kite but then...'",
+        explanation: "Doctor Time said the boy had a kite, but then he lost it!"
+      },
+      {
+        id: 19,
+        emoji: "📣",
+        category: "Story Detail",
+        question: "Where did the voice calling 'I found it!' come from?",
+        correct: "From inside the time machine",
+        options: [
+          "From inside the time machine",
+          "From behind the picture",
+          "From outside the museum",
+          "From the street market"
+        ],
+        hint: "Look at lines 24–25: 'I found it!' called a voice from...",
+        explanation: "The voice came from inside the time machine where Ming Ming was looking for his kite."
+      },
+      {
+        id: 20,
+        emoji: "🧗",
+        category: "Vocabulary",
+        question: "What does 'climbed out' tell us about Ming Ming's movement?",
+        correct: "He came out of an enclosed space by moving up and over",
+        options: [
+          "He came out of an enclosed space by moving up and over",
+          "He ran fast across a flat road",
+          "He fell down from the sky",
+          "He jumped into a swimming pool"
+        ],
+        hint: "Think about how a small boy gets out of a time machine with high sides.",
+        explanation: "'Climbed out' shows he moved up and over the side to exit the enclosed time machine."
+      }
+    ];
+
+    // ==================== GAME STATE ====================
+    let soundEnabled = true;
+    let audioCtx = null;
+    let activeQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let correctCount = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let selectedModeCount = 20;
+    let answeredCurrent = false;
+    let userHistory = []; // Stores { question, userAnswer, correctAnswer, isCorrect }
+
+    // ==================== WEB AUDIO API SOUND EFFECTS ====================
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          audioCtx = new AudioContext();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playTone(freq, type, duration, startTimeOffset = 0, volume = 0.18) {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime + startTimeOffset);
+
+      gain.gain.setValueAtTime(volume, audioCtx.currentTime + startTimeOffset);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + startTimeOffset + duration);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(audioCtx.currentTime + startTimeOffset);
+      osc.stop(audioCtx.currentTime + startTimeOffset + duration);
+    }
+
+    function playClickSound() {
+      playTone(520, 'sine', 0.08, 0, 0.12);
+    }
+
+    function playCorrectSound() {
+      // Cheerful ascending chime
+      playTone(523.25, 'triangle', 0.16, 0, 0.2);    // C5
+      playTone(659.25, 'triangle', 0.16, 0.09, 0.2); // E5
+      playTone(783.99, 'triangle', 0.28, 0.18, 0.22); // G5
+      playTone(1046.5, 'sine', 0.35, 0.27, 0.18);    // C6
+    }
+
+    function playWrongSound() {
+      // Gentle cartoon boing
+      playTone(260, 'sawtooth', 0.18, 0, 0.14);
+      playTone(195, 'sawtooth', 0.28, 0.14, 0.14);
+    }
+
+    function playVictoryFanfare() {
+      const notes = [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5];
+      const times = [0, 0.12, 0.24, 0.36, 0.52, 0.66];
+      notes.forEach((n, idx) => {
+        playTone(n, 'triangle', 0.25, times[idx], 0.2);
+      });
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('soundIcon');
+      const label = document.getElementById('soundLabel');
+      if (soundEnabled) {
+        icon.textContent = '🔊';
+        label.textContent = 'Sound ON';
+        playClickSound();
+      } else {
+        icon.textContent = '🔇';
+        label.textContent = 'Sound OFF';
+      }
+    }
+
+    // ==================== HELPER UTILITIES ====================
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    // ==================== GAME FLOW FUNCTIONS ====================
+    function startGame(numQuestions) {
+      playClickSound();
+      selectedModeCount = numQuestions;
+
+      // If 20 questions, keep logical story order (or shuffle for 10-question quick sprint)
+      if (numQuestions === 20) {
+        activeQuestions = [...ALL_QUESTIONS];
+      } else {
+        activeQuestions = shuffleArray(ALL_QUESTIONS).slice(0, numQuestions);
+      }
+
+      currentIndex = 0;
+      score = 0;
+      correctCount = 0;
+      streak = 0;
+      bestStreak = 0;
+      userHistory = [];
+
+      document.getElementById('startScreen').classList.add('hidden');
+      document.getElementById('endScreen').classList.add('hidden');
+      document.getElementById('quizScreen').classList.remove('hidden');
+      document.getElementById('homeBtn').classList.remove('hidden');
+
+      updateHUD();
+      renderQuestion();
+    }
+
+    function updateHUD() {
+      const total = activeQuestions.length;
+      document.getElementById('currentQNum').textContent = currentIndex + 1;
+      document.getElementById('totalQNum').textContent = total;
+      document.getElementById('scoreCount').textContent = score;
+      document.getElementById('streakCount').textContent = streak;
+
+      // Timeline calculation from 2026 down to 1120 AD
+      const progressPct = Math.round(((currentIndex) / total) * 100);
+      const displayPct = Math.max(5, progressPct);
+      document.getElementById('progressBar').style.width = `${displayPct}%`;
+
+      const currentSimulatedYear = Math.round(2026 - ((2026 - 1120) * (currentIndex / total)));
+      document.getElementById('yearIndicator').textContent = `Current Year: ${currentSimulatedYear} AD`;
+    }
+
+    function renderQuestion() {
+      answeredCurrent = false;
+      const q = activeQuestions[currentIndex];
+
+      // Reset UI elements
+      document.getElementById('hintBox').classList.add('hidden');
+      document.getElementById('feedbackBox').classList.add('hidden');
+      document.getElementById('questionEmoji').textContent = q.emoji;
+      document.getElementById('categoryBadge').textContent = `📖 ${q.category}`;
+      document.getElementById('questionText').textContent = q.question;
+      document.getElementById('hintText').textContent = q.hint;
+
+      // Shuffle options for variety
+      const shuffledOptions = shuffleArray(q.options);
+      const letters = ['A', 'B', 'C', 'D'];
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = '';
+
+      shuffledOptions.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-card rounded-2xl p-4 text-left flex items-center gap-3.5 cursor-pointer w-full';
+        btn.dataset.option = optText;
+        btn.onclick = () => handleAnswer(btn, optText);
+
+        btn.innerHTML = `
+          <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-100 border-2 border-amber-700 text-amber-950 font-cartoon font-extrabold text-base sm:text-lg flex items-center justify-center shrink-0">
+            ${letters[idx]}
+          </span>
+          <span class="font-bold text-base sm:text-lg text-amber-950 leading-snug">
+            ${optText}
+          </span>
+        `;
+        grid.appendChild(btn);
+      });
+
+      // Update Next button text on last question
+      const nextLabel = document.getElementById('nextBtnLabel');
+      if (currentIndex === activeQuestions.length - 1) {
+        nextLabel.textContent = 'Finish Journey!';
+      } else {
+        nextLabel.textContent = 'Next Question';
+      }
+    }
+
+    function toggleHint() {
+      playClickSound();
+      const hintBox = document.getElementById('hintBox');
+      hintBox.classList.toggle('hidden');
+    }
+
+    function handleAnswer(selectedBtn, chosenOption) {
+      if (answeredCurrent) return;
+      answeredCurrent = true;
+
+      const q = activeQuestions[currentIndex];
+      const isCorrect = chosenOption === q.correct;
+      const allButtons = document.querySelectorAll('#optionsGrid button');
+
+      // Disable all buttons and highlight correct/wrong
+      allButtons.forEach(btn => {
+        btn.disabled = true;
+        const val = btn.dataset.option;
+        if (val === q.correct) {
+          btn.classList.add('option-correct');
+          btn.querySelector('span:first-child').textContent = '✓';
+          btn.querySelector('span:first-child').classList.replace('bg-amber-100', 'bg-emerald-600');
+          btn.querySelector('span:first-child').classList.replace('text-amber-950', 'text-white');
+        } else if (btn === selectedBtn && !isCorrect) {
+          btn.classList.add('option-wrong');
+          btn.querySelector('span:first-child').textContent = '✗';
+          btn.querySelector('span:first-child').classList.replace('bg-amber-100', 'bg-red-600');
+          btn.querySelector('span:first-child').classList.replace('text-amber-950', 'text-white');
+        } else {
+          btn.classList.add('option-dimmed');
+        }
+      });
+
+      // Update score & streak
+      const feedbackBox = document.getElementById('feedbackBox');
+      const feedbackEmoji = document.getElementById('feedbackEmoji');
+      const feedbackTitle = document.getElementById('feedbackTitle');
+      const feedbackExplanation = document.getElementById('feedbackExplanation');
+
+      if (isCorrect) {
+        playCorrectSound();
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        correctCount++;
+        const bonus = streak >= 3 ? 20 : 0;
+        score += (100 + bonus);
+
+        feedbackBox.className = 'rounded-2xl p-4 border-2 bg-emerald-100/95 border-emerald-600 text-emerald-950 shadow-md';
+        feedbackEmoji.textContent = streak >= 3 ? '🔥' : '🎉';
+        feedbackTitle.textContent = streak >= 3
+          ? `Awesome! ${streak} in a row! (+${100 + bonus} pts)`
+          : 'Spot On! Great reading! (+100 pts)';
+        feedbackExplanation.textContent = q.explanation;
+
+        // Pulse streak badge
+        const streakBadge = document.getElementById('streakBadge');
+        streakBadge.style.transform = 'scale(1.15)';
+        setTimeout(() => streakBadge.style.transform = 'scale(1)', 250);
+      } else {
+        playWrongSound();
+        streak = 0;
+
+        feedbackBox.className = 'rounded-2xl p-4 border-2 bg-red-100/95 border-red-500 text-red-950 shadow-md';
+        feedbackEmoji.textContent = '🧐';
+        feedbackTitle.textContent = `Not quite! The answer is "${q.correct}".`;
+        feedbackExplanation.textContent = q.explanation;
+      }
+
+      // Save to history
+      userHistory.push({
+        question: q.question,
+        userAnswer: chosenOption,
+        correctAnswer: q.correct,
+        explanation: q.explanation,
+        isCorrect: isCorrect
+      });
+
+      // Refresh score/streak UI
+      document.getElementById('scoreCount').textContent = score;
+      document.getElementById('streakCount').textContent = streak;
+      feedbackBox.classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      playClickSound();
+      currentIndex++;
+      if (currentIndex < activeQuestions.length) {
+        updateHUD();
+        renderQuestion();
+      } else {
+        showEndScreen();
+      }
+    }
+
+    function showEndScreen() {
+      playVictoryFanfare();
+      document.getElementById('quizScreen').classList.add('hidden');
+      document.getElementById('endScreen').classList.remove('hidden');
+
+      const total = activeQuestions.length;
+      const accuracy = correctCount / total;
+
+      document.getElementById('finalScore').textContent = score;
+      document.getElementById('finalCorrect').textContent = `${correctCount}/${total}`;
+      document.getElementById('finalStreak').textContent = bestStreak;
+
+      // Determine Time Traveller Rank & Stars
+      const rankTitle = document.getElementById('rankTitle');
+      const rankSubtitle = document.getElementById('rankSubtitle');
+      const starsContainer = document.getElementById('starsContainer');
+
+      if (accuracy >= 0.9) {
+        rankTitle.textContent = "👑 Grand Song Dynasty Scholar!";
+        rankSubtitle.textContent = "滿分級表現！你完全掌握了第三課《時光機大冒險》的細節！";
+        starsContainer.textContent = "⭐⭐⭐⭐⭐";
+      } else if (accuracy >= 0.7) {
+        rankTitle.textContent = "🚀 Master Time Explorer!";
+        rankSubtitle.textContent = "非常優秀！Doctor Time 為你的閱讀理解能力感到驕傲！";
+        starsContainer.textContent = "⭐⭐⭐⭐";
+      } else if (accuracy >= 0.5) {
+        rankTitle.textContent = "🧭 Junior Time Cadet!";
+        rankSubtitle.textContent = "表現不錯！再看一次錯題溫習室，下次一定能拿更高分！";
+        starsContainer.textContent = "⭐⭐⭐";
+      } else {
+        rankTitle.textContent = "🕰️ Time Machine Apprentice!";
+        rankSubtitle.textContent = "繼續加油！多運用「Story Clue」線索提示，再挑戰一次吧！";
+        starsContainer.textContent = "⭐⭐";
+      }
+
+      // Render Question Review List
+      const reviewList = document.getElementById('reviewList');
+      reviewList.innerHTML = '';
+
+      const missed = userHistory.filter(item => !item.isCorrect);
+      const reviewHeader = document.getElementById('reviewHeader');
+
+      if (missed.length === 0) {
+        reviewHeader.innerHTML = `<span>🌟</span><span>Perfect Score! No mistakes to review!</span>`;
+        reviewList.innerHTML = `
+          <div class="bg-emerald-100 border-2 border-emerald-500 rounded-2xl p-4 text-center text-emerald-900 font-bold">
+            🎉 Incredible! You answered all ${total} questions correctly! Ming Ming and Doctor Time salute you!
+          </div>
+        `;
+      } else {
+        reviewHeader.innerHTML = `<span>📋</span><span>Review Missed Questions (${missed.length} to practice):</span>`;
+        missed.forEach((item, idx) => {
+          const card = document.createElement('div');
+          card.className = 'bg-white/90 border-2 border-amber-400 rounded-xl p-3.5 shadow-xs';
+          card.innerHTML = `
+            <p class="font-bold text-amber-950 text-sm sm:text-base mb-1.5">${idx + 1}. ${item.question}</p>
+            <div class="flex flex-wrap gap-2 text-xs sm:text-sm font-bold mb-1">
+              <span class="bg-red-100 text-red-800 px-2.5 py-0.5 rounded-lg border border-red-300">Your answer: ${item.userAnswer}</span>
+              <span class="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-lg border border-emerald-400">Correct: ${item.correctAnswer}</span>
+            </div>
+            <p class="text-xs text-amber-800 italic">💡 ${item.explanation}</p>
+          `;
+          reviewList.appendChild(card);
+        });
+      }
+    }
+
+    function restartSameMode() {
+      startGame(selectedModeCount);
+    }
+
+    function confirmReturnHome() {
+      playClickSound();
+      if (!document.getElementById('quizScreen').classList.contains('hidden')) {
+        document.getElementById('confirmModal').classList.remove('hidden');
+      } else {
+        returnToMenu();
+      }
+    }
+
+    function closeConfirmModal() {
+      playClickSound();
+      document.getElementById('confirmModal').classList.add('hidden');
+    }
+
+    function returnToMenu() {
+      playClickSound();
+      document.getElementById('confirmModal').classList.add('hidden');
+      document.getElementById('quizScreen').classList.add('hidden');
+      document.getElementById('endScreen').classList.add('hidden');
+      document.getElementById('homeBtn').classList.add('hidden');
+      document.getElementById('startScreen').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
